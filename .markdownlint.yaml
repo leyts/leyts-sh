@@ -1,0 +1,5 @@
+table-column-style:
+    style: compact
+
+line-length:
+    tables: false
