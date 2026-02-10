@@ -27,11 +27,11 @@ readonly _LOG_LEVEL_ERROR=3
 # --- Colour setup ---
 
 _log_init_colour() {
-    _LOG_CLR_RESET=""
-    _LOG_CLR_DEBUG=""
-    _LOG_CLR_INFO=""
-    _LOG_CLR_WARN=""
-    _LOG_CLR_ERROR=""
+    _LOG_CLR_RESET=''
+    _LOG_CLR_DEBUG=''
+    _LOG_CLR_INFO=''
+    _LOG_CLR_WARN=''
+    _LOG_CLR_ERROR=''
 
     # Respect NO_COLOR
     [[ -n "${NO_COLOR:-}" ]] && return 0
@@ -52,11 +52,11 @@ _log_init_colour
 
 _log_level_to_int() {
     case "${1^^}" in
-        DEBUG) echo "$_LOG_LEVEL_DEBUG" ;;
-        INFO)  echo "$_LOG_LEVEL_INFO"  ;;
-        WARN)  echo "$_LOG_LEVEL_WARN"  ;;
-        ERROR) echo "$_LOG_LEVEL_ERROR" ;;
-        *)     echo "$_LOG_LEVEL_INFO"  ;;
+        DEBUG) printf '%s' "$_LOG_LEVEL_DEBUG" ;;
+        INFO)  printf '%s' "$_LOG_LEVEL_INFO"  ;;
+        WARN)  printf '%s' "$_LOG_LEVEL_WARN"  ;;
+        ERROR) printf '%s' "$_LOG_LEVEL_ERROR" ;;
+        *)     printf '%s' "$_LOG_LEVEL_INFO"  ;;
     esac
 }
 
