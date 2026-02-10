@@ -53,7 +53,7 @@ _log_init_colour
 # --- Internal ---
 
 _log_level_to_int() {
-    case "${1^^}" in
+    case "$1" in
         DEBUG) printf '%s' "$_LOG_LEVEL_DEBUG" ;;
         INFO)  printf '%s' "$_LOG_LEVEL_INFO"  ;;
         WARN)  printf '%s' "$_LOG_LEVEL_WARN"  ;;
