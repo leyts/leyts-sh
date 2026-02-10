@@ -53,9 +53,10 @@ setup() {
     [[ "$status" -eq 0 ]]
 }
 
-@test "set_log_level is case-insensitive" {
+@test "set_log_level rejects lowercase" {
     run set_log_level debug
-    [[ "$status" -eq 0 ]]
+    [[ "$status" -ne 0 ]]
+    [[ "$output" == *"invalid log level"* ]]
 }
 
 @test "set_log_level rejects invalid levels" {

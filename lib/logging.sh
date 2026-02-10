@@ -24,6 +24,8 @@ readonly _LOG_LEVEL_INFO=1
 readonly _LOG_LEVEL_WARN=2
 readonly _LOG_LEVEL_ERROR=3
 
+: "${LOG_LEVEL:=INFO}"
+
 # --- Colour setup ---
 
 _log_init_colour() {
@@ -66,7 +68,7 @@ _log() {
     local message="$*"
 
     local min_level
-    min_level=$(_log_level_to_int "${LOG_LEVEL:-INFO}")
+    min_level=$(_log_level_to_int "$LOG_LEVEL")
     local msg_level
     msg_level=$(_log_level_to_int "$level")
 
@@ -84,8 +86,8 @@ _log() {
 # Usage: set_log_level <level>
 set_log_level() {
     local level="${1:?log level required}"
-    case "${level^^}" in
-        DEBUG|INFO|WARN|ERROR) LOG_LEVEL="${level^^}" ;;
+    case "$level" in
+        DEBUG|INFO|WARN|ERROR) LOG_LEVEL="$level" ;;
         *)
             printf "error: invalid log level '%s' (expected DEBUG, INFO, WARN, ERROR)\n" "$level" >&2
             return 1
@@ -102,7 +104,7 @@ log_execute() {
     shift
 
     local min_level
-    min_level=$(_log_level_to_int "${LOG_LEVEL:-INFO}")
+    min_level=$(_log_level_to_int "$LOG_LEVEL")
     local cmd_level
     cmd_level=$(_log_level_to_int "$level")
 
