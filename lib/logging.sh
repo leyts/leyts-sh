@@ -77,21 +77,22 @@ _log_init_colour
 # --- Handlers ---
 
 _log_handler_console() {
-    local -n _log_handler_rec=$1
-    local level="${_log_handler_rec[level]}"
+    local level="$1"
+    local message="$2"
     local colour="${_LOG_CLR["$level"]}"
-    local message="${_log_handler_rec[message]}"
     printf '%s[%-5s]%s %s\n' \
         "$colour" "$level" "$_LOG_CLR_RESET" "$message" >&2
 }
 
 _log_handler_json() {
-    local -n _log_handler_rec=$1
     jq -nc \
-        --arg ts "${_log_handler_rec[timestamp]}" \
-        --arg lvl "${_log_handler_rec[level]}" \
-        --arg msg "${_log_handler_rec[message]}" \
-        '{"timestamp": $ts, "level": $lvl, "message": $msg}' >&2
+        --arg lvl "$1" \
+        --arg msg "$2" \
+        '{
+            "timestamp": (now | strftime("%Y-%m-%dT%H:%M:%SZ")),
+            "level": $lvl,
+            "message": $msg
+        }' >&2
 }
 
 # --- Internal ---
@@ -113,18 +114,9 @@ _log() {
     local msg_level=${_LOG_LEVELS[$level]}
     (( msg_level >= min_level )) || return 0
 
-    local timestamp
-    printf -v timestamp '%(%Y-%m-%dT%H:%M:%S%z)T' -1
-
-    local -A _log_rec=(
-        [timestamp]="$timestamp"
-        [level]="$level"
-        [message]="$message"
-    )
-
     case "$_LOG_HANDLER" in
-        console) _log_handler_console _log_rec ;;
-        json)    _log_handler_json    _log_rec ;;
+        console) _log_handler_console "$level" "$message" ;;
+        json)    _log_handler_json    "$level" "$message" ;;
     esac
 }
 
