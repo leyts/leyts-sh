@@ -95,3 +95,49 @@ setup() {
     run log_info "-e flag"
     [[ "$output" == *"-e flag"* ]]
 }
+
+# --- LOG_HANDLER ---
+
+@test "LOG_HANDLER defaults to console" {
+    run log_info "hello"
+    [[ "$output" == *"[INFO ]"*"hello"* ]]
+}
+
+@test "invalid LOG_HANDLER is rejected" {
+    run bash -c 'LOG_HANDLER=bogus source "$1/lib/logging.sh"' _ "$REPO_ROOT"
+    [[ "$status" -ne 0 ]]
+    [[ "$output" == *"invalid LOG_HANDLER"* ]]
+}
+
+@test "LOG_HANDLER=json fails when jq is not available" {
+    run bash -c 'PATH=/nonexistent LOG_HANDLER=json source "$1/lib/logging.sh"' _ "$REPO_ROOT"
+    [[ "$status" -ne 0 ]]
+    [[ "$output" == *"requires jq"* ]]
+}
+
+# --- JSON handler ---
+
+@test "JSON handler outputs valid parseable JSON" {
+    run bash -c 'LOG_HANDLER=json source "$1/lib/logging.sh" && log_info "hello json"' _ "$REPO_ROOT"
+    jq -e . <<<"$output"
+}
+
+@test "JSON output contains correct timestamp, level and message fields" {
+    run bash -c 'LOG_HANDLER=json source "$1/lib/logging.sh" && log_warn "test msg"' _ "$REPO_ROOT"
+    local ts level msg
+    ts=$(jq -r '.timestamp' <<<"$output")
+    level=$(jq -r '.level' <<<"$output")
+    msg=$(jq -r '.message' <<<"$output")
+    [[ "$ts" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2} ]]
+    [[ "$level" == "WARN" ]]
+    [[ "$msg" == "test msg" ]]
+}
+
+@test "JSON handler escapes special characters" {
+    run bash -c 'LOG_HANDLER=json source "$1/lib/logging.sh" && log_info "quote\"slash\\"' _ "$REPO_ROOT"
+    jq -e . <<<"$output"
+    local msg
+    msg=$(jq -r '.message' <<<"$output")
+    [[ "$msg" == 'quote"slash\' ]]
+}
+

@@ -11,6 +11,7 @@
 #
 # Configuration (via environment variables):
 #   LOG_LEVEL   — Minimum level to display: DEBUG, INFO, WARN, ERROR (default: INFO)
+#   LOG_HANDLER — Output handler: console, json (default: console)
 #   NO_COLOR    — Set to any value to disable colour
 #
 
@@ -19,21 +20,44 @@ readonly _LIB_LOGGING_LOADED=1
 
 # --- Level definitions ---
 
-readonly _LOG_LEVEL_DEBUG=0
-readonly _LOG_LEVEL_INFO=1
-readonly _LOG_LEVEL_WARN=2
-readonly _LOG_LEVEL_ERROR=3
+declare -grA _LOG_LEVELS=(
+    [DEBUG]=0
+    [INFO]=1
+    [WARN]=2
+    [ERROR]=3
+)
 
 : "${LOG_LEVEL:=INFO}"
+: "${LOG_HANDLER:=console}"
+
+# --- Handler setup ---
+
+_log_init_handler() {
+    case "$LOG_HANDLER" in
+        console) _LOG_HANDLER='console' ;;
+        json)
+            command -v jq &>/dev/null || {
+                printf "ERROR: LOG_HANDLER=json requires jq\n" >&2
+                return 1
+            }
+            _LOG_HANDLER='json'
+            ;;
+        *)
+            printf "ERROR: invalid LOG_HANDLER '%s'\n" \
+                "$LOG_HANDLER" >&2
+            return 1
+            ;;
+    esac
+}
+
+_log_init_handler || return 1
 
 # --- Colour setup ---
 
+declare -gA _LOG_CLR=()
+
 _log_init_colour() {
-    _LOG_CLR_RESET=''
-    _LOG_CLR_DEBUG=''
-    _LOG_CLR_INFO=''
-    _LOG_CLR_WARN=''
-    _LOG_CLR_ERROR=''
+    _LOG_CLR=([DEBUG]='' [INFO]='' [WARN]='' [ERROR]='')
 
     # Respect NO_COLOR
     [[ -n "${NO_COLOR:-}" ]] && return 0
@@ -41,43 +65,67 @@ _log_init_colour() {
     # Only colourise if stderr is a terminal.
     [[ -t 2 ]] || return 0
 
-    _LOG_CLR_RESET=$'\033[0m'
-    _LOG_CLR_DEBUG=$'\033[36m'  # cyan
-    _LOG_CLR_INFO=$'\033[32m'   # green
-    _LOG_CLR_WARN=$'\033[33m'   # yellow
-    _LOG_CLR_ERROR=$'\033[31m'  # red
+    _LOG_CLR_RESET=$'\033[0m' # TODO: Make name clearer?
+    _LOG_CLR[DEBUG]=$'\033[36m'  # cyan
+    _LOG_CLR[INFO]=$'\033[32m'   # green
+    _LOG_CLR[WARN]=$'\033[33m'   # yellow
+    _LOG_CLR[ERROR]=$'\033[31m'  # red
 }
 
 _log_init_colour
 
+# --- Handlers ---
+
+_log_handler_console() {
+    local -n _log_handler_rec=$1
+    local level="${_log_handler_rec[level]}"
+    local colour="${_LOG_CLR["$level"]}"
+    local message="${_log_handler_rec[message]}"
+    printf '%s[%-5s]%s %s\n' \
+        "$colour" "$level" "$_LOG_CLR_RESET" "$message" >&2
+}
+
+_log_handler_json() {
+    local -n _log_handler_rec=$1
+    jq -nc \
+        --arg ts "${_log_handler_rec[timestamp]}" \
+        --arg lvl "${_log_handler_rec[level]}" \
+        --arg msg "${_log_handler_rec[message]}" \
+        '{"timestamp": $ts, "level": $lvl, "message": $msg}' >&2
+}
+
 # --- Internal ---
 
-_log_level_to_int() {
-    case "$1" in
-        DEBUG) printf '%s' "$_LOG_LEVEL_DEBUG" ;;
-        INFO)  printf '%s' "$_LOG_LEVEL_INFO"  ;;
-        WARN)  printf '%s' "$_LOG_LEVEL_WARN"  ;;
-        ERROR) printf '%s' "$_LOG_LEVEL_ERROR" ;;
-        *)     printf '%s' "$_LOG_LEVEL_INFO"  ;;
-    esac
+_log_validate_log_level() {
+    local level="$1"
+    if ! [[ -n "${_LOG_LEVELS[$level]:-}" ]]; then
+        printf "ERROR: invalid log level '%s'\n" "$level" >&2
+        return 1
+    fi
 }
 
 _log() {
-    local level="$1" colour="$2"
-    shift 2
+    local level="$1"
+    shift
     local message="$*"
 
-    local min_level
-    min_level=$(_log_level_to_int "$LOG_LEVEL")
-    local msg_level
-    msg_level=$(_log_level_to_int "$level")
-
+    local min_level=${_LOG_LEVELS[$LOG_LEVEL]:-${_LOG_LEVELS[INFO]}}
+    local msg_level=${_LOG_LEVELS[$level]}
     (( msg_level >= min_level )) || return 0
 
-    local label
-    label=$(printf '%-5s' "$level")
+    local timestamp
+    printf -v timestamp '%(%Y-%m-%dT%H:%M:%S%z)T' -1
 
-    printf '%s[%s]%s %s\n' "$colour" "$label" "$_LOG_CLR_RESET" "$message" >&2
+    local -A _log_rec=(
+        [timestamp]="$timestamp"
+        [level]="$level"
+        [message]="$message"
+    )
+
+    case "$_LOG_HANDLER" in
+        console) _log_handler_console _log_rec ;;
+        json)    _log_handler_json    _log_rec ;;
+    esac
 }
 
 # --- Public API ---
@@ -86,13 +134,8 @@ _log() {
 # Usage: set_log_level <level>
 set_log_level() {
     local level="${1:?log level required}"
-    case "$level" in
-        DEBUG|INFO|WARN|ERROR) LOG_LEVEL="$level" ;;
-        *)
-            printf "error: invalid log level '%s' (expected DEBUG, INFO, WARN, ERROR)\n" "$level" >&2
-            return 1
-            ;;
-    esac
+    _log_validate_log_level "$level" || return 1
+    LOG_LEVEL="$level"
 }
 
 # Execute a command, suppressing output if below the current log level.
@@ -101,12 +144,11 @@ set_log_level() {
 # are redirected to /dev/null. Otherwise the command runs normally.
 log_execute() {
     local level="${1:?log level required}"
+    _log_validate_log_level "$level" || return 1
     shift
 
-    local min_level
-    min_level=$(_log_level_to_int "$LOG_LEVEL")
-    local cmd_level
-    cmd_level=$(_log_level_to_int "$level")
+    local min_level=${_LOG_LEVELS[$LOG_LEVEL]:-${_LOG_LEVELS[INFO]}}
+    local cmd_level=${_LOG_LEVELS[$level]}
 
     if (( cmd_level >= min_level )); then
         "$@"
@@ -115,7 +157,7 @@ log_execute() {
     fi
 }
 
-log_debug() { _log DEBUG "$_LOG_CLR_DEBUG" "$@"; }
-log_info()  { _log INFO  "$_LOG_CLR_INFO"  "$@"; }
-log_warn()  { _log WARN  "$_LOG_CLR_WARN"  "$@"; }
-log_error() { _log ERROR "$_LOG_CLR_ERROR" "$@"; }
+log_debug() { _log DEBUG "$@"; }
+log_info()  { _log INFO  "$@"; }
+log_warn()  { _log WARN  "$@"; }
+log_error() { _log ERROR "$@"; }
