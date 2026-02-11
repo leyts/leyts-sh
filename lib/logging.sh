@@ -37,13 +37,13 @@ _log_init_handler() {
         console) _LOG_HANDLER='console' ;;
         json)
             command -v jq &>/dev/null || {
-                printf "ERROR: LOG_HANDLER=json requires jq\n" >&2
+                printf "error: LOG_HANDLER=json requires jq\n" >&2
                 return 1
             }
             _LOG_HANDLER='json'
             ;;
         *)
-            printf "ERROR: invalid LOG_HANDLER '%s'\n" \
+            printf "error: invalid LOG_HANDLER '%s'\n" \
                 "$LOG_HANDLER" >&2
             return 1
             ;;
@@ -100,7 +100,7 @@ _log_handler_json() {
 _log_validate_log_level() {
     local level="$1"
     if ! [[ -n "${_LOG_LEVELS[$level]:-}" ]]; then
-        printf "ERROR: invalid log level '%s'\n" "$level" >&2
+        printf "error: invalid log level '%s'\n" "$level" >&2
         return 1
     fi
 }
