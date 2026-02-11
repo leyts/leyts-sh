@@ -40,6 +40,7 @@ source logging.sh
 | Variable | Default | Description |
 | --- | --- | --- |
 | `LOG_LEVEL` | `INFO` | Minimum log level: DEBUG, INFO, WARN, ERROR |
+| `LOG_HANDLER` | `console` | Output handler: console, json |
 | `NO_COLOR` | unset | Set to disable colour |
 
 ## Running tests
