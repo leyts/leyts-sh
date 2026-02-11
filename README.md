@@ -28,7 +28,7 @@ source logging.sh
 
 | File | Description |
 | --- | --- |
-| `assert.sh` | Filesystem guard functions (file/directory existence, permissions) |
+| `assert.sh` | Filesystem guard functions (file/directory existence) |
 | `common.sh` | Convenience loader for all modules |
 | `git.sh` | Repository revision and status queries |
 | `logging.sh` | Levelled logging (DEBUG/INFO/WARN/ERROR) with colour |
