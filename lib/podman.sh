@@ -66,7 +66,7 @@ podman_get_image_annotation() {
     local image="${1:?image name required}"
     local key="${2:?annotation key required}"
     local value
-    value=$(podman image inspect "$image" --format "{{ index .Annotations "'"$key"'" }}" 2>/dev/null) || {
+    value=$(podman image inspect "$image" --format '{{ index .Annotations "'"$key"'" }}' 2>/dev/null) || {
         printf "error: image '%s' not found\n" "$image" >&2
         return 1
     }
