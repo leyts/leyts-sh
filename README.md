@@ -56,3 +56,7 @@ bats tests/
 ```bash
 shellcheck lib/*.sh
 ```
+
+## Licence
+
+[MIT](LICENCE)
