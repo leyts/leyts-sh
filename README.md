@@ -1,6 +1,9 @@
 # leyts-sh
 
-Reusable Bash library modules for logging and container management.
+A Bash library for logging and container management.
+
+> [!WARNING]
+> This library is under development. The API is subject to breaking changes.
 
 ## Installation
 
@@ -45,7 +48,7 @@ source logging.sh
 
 ## Running tests
 
-Requires [bats-core](https://github.com/bats-core/bats-core):
+Requires [bats-core](https://bats-core.readthedocs.io/):
 
 ```bash
 bats tests/
