@@ -4,10 +4,10 @@
 # Usage:
 #   source logging.sh
 #
-#   log_info "Starting deployment..."
-#   log_warn "Config file missing, using defaults"
-#   log_error "Connection refused"
 #   log_debug "Resolved image: $image"
+#   log_info 'Starting deployment...'
+#   log_warn 'Config file missing, using defaults'
+#   log_error 'Connection refused'
 #
 # Configuration (via environment variables):
 #   LOG_LEVEL   — Minimum level to display: DEBUG, INFO, WARN, ERROR (default: INFO)
