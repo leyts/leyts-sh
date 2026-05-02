@@ -77,11 +77,11 @@ _log_init_colour
 # --- Handlers ---
 
 _log_handler_console() {
-    local level="$1"
-    local message="$2"
-    local colour="${_LOG_CLR["$level"]}"
+    local lvl="$1"
+    local msg="$2"
+    local clr="${_LOG_CLR["$lvl"]}"
     printf '%s[%-5s]%s %s\n' \
-        "$colour" "$level" "$_LOG_CLR_RESET" "$message" >&2
+        "$clr" "$lvl" "$_LOG_CLR_RESET" "$msg" >&2
 }
 
 _log_handler_json() {
@@ -98,25 +98,25 @@ _log_handler_json() {
 # --- Internal ---
 
 _log_validate_log_level() {
-    local level="$1"
-    if ! [[ -n "${_LOG_LEVELS[$level]:-}" ]]; then
-        printf "error: invalid log level '%s'\n" "$level" >&2
+    local lvl="$1"
+    if ! [[ -n "${_LOG_LEVELS[$lvl]:-}" ]]; then
+        printf "error: invalid log level '%s'\n" "$lvl" >&2
         return 1
     fi
 }
 
 _log() {
-    local level="$1"
+    local lvl="$1"
     shift
 
-    local min_level=${_LOG_LEVELS[$LOG_LEVEL]:-${_LOG_LEVELS[INFO]}}
-    local msg_level=${_LOG_LEVELS[$level]}
-    (( msg_level >= min_level )) || return 0
+    local min_lvl=${_LOG_LEVELS[$LOG_LEVEL]:-${_LOG_LEVELS[INFO]}}
+    local msg_lvl=${_LOG_LEVELS[$lvl]}
+    (( msg_lvl >= min_lvl )) || return 0
 
-    local message="$*"
+    local msg="$*"
     case "$_LOG_HANDLER" in
-        console) _log_handler_console "$level" "$message" ;;
-        json)    _log_handler_json    "$level" "$message" ;;
+        console) _log_handler_console "$lvl" "$msg" ;;
+        json)    _log_handler_json    "$lvl" "$msg" ;;
     esac
 }
 
@@ -125,9 +125,9 @@ _log() {
 # Set the active log level with validation.
 # Usage: set_log_level <level>
 set_log_level() {
-    local level="${1:?log level required}"
-    _log_validate_log_level "$level" || return 1
-    LOG_LEVEL="$level"
+    local lvl="${1:?log level required}"
+    _log_validate_log_level "$lvl" || return 1
+    LOG_LEVEL="$lvl"
 }
 
 # Execute a command, suppressing output if below the current log level.
@@ -135,14 +135,14 @@ set_log_level() {
 # If the current level is higher than the specified level, stdout and stderr
 # are redirected to /dev/null. Otherwise the command runs normally.
 log_execute() {
-    local level="${1:?log level required}"
-    _log_validate_log_level "$level" || return 1
+    local lvl="${1:?log level required}"
+    _log_validate_log_level "$lvl" || return 1
     shift
 
-    local min_level=${_LOG_LEVELS[$LOG_LEVEL]:-${_LOG_LEVELS[INFO]}}
-    local cmd_level=${_LOG_LEVELS[$level]}
+    local min_lvl=${_LOG_LEVELS[$LOG_LEVEL]:-${_LOG_LEVELS[INFO]}}
+    local cmd_lvl=${_LOG_LEVELS[$lvl]}
 
-    if (( cmd_level >= min_level )); then
+    if (( cmd_lvl >= min_lvl )); then
         "$@"
     else
         "$@" >/dev/null 2>&1
