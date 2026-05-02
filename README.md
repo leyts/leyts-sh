@@ -38,7 +38,7 @@ The `logging.sh` module supports these environment variables:
 | --- | --- | --- |
 | `LOG_LEVEL` | `INFO` | Minimum log level: DEBUG, INFO, WARN, ERROR |
 | `LOG_HANDLER` | `console` | Output handler: console, json |
-| `NO_COLOR` | unset | Set to disable colour |
+| `NO_COLOR` | unset | Disable colour output |
 
 > [!NOTE]
 > `LOG_HANDLER=json` requires [`jq`](https://jqlang.github.io/jq/).
