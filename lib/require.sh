@@ -20,7 +20,7 @@ require_command() {
 }
 
 # Prompt the user for yes/no confirmation.
-# Usage: confirm "Do something dangerous?"
+# Usage: confirm <prompt>
 # Returns: 0 if confirmed, 1 otherwise.
 confirm() {
     local prompt="${1:-Proceed?}"
