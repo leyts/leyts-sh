@@ -1,50 +1,47 @@
 # leyts-sh
 
-A Bash library for logging and container management.
+A small Bash library.
 
 > [!WARNING]
 > This library is under development. The API is subject to breaking changes.
 
-## Installation
-
-Add as a Git submodule:
-
-```bash
-git submodule add https://github.com/leyts/leyts-sh.git
-```
-
 ## Usage
 
-Source individual modules or use `common.sh` to load everything:
+Load all modules with `common.sh`:
 
 ```bash
-# Load all modules
-source common.sh
+source lib/common.sh
 ```
 
+Or load only the modules you need:
+
 ```bash
-# Or load selectively
-source logging.sh
+source lib/logging.sh
 ```
 
 ## Modules
 
 | File | Description |
 | --- | --- |
-| `assert.sh` | Filesystem guard functions (file/directory existence) |
-| `common.sh` | Convenience loader for all modules |
-| `git.sh` | Repository revision and status queries |
-| `logging.sh` | Levelled logging (DEBUG/INFO/WARN/ERROR) with colour |
-| `podman.sh` | Container and image query/lifecycle helpers |
-| `require.sh` | Command availability checks and user prompts |
+| [`assert.sh`](lib/assert.sh) | Filesystem guard functions (file/directory existence and non-existence) |
+| [`common.sh`](lib/common.sh) | Convenience loader for all modules |
+| [`git.sh`](lib/git.sh) | Repository revision and status queries |
+| [`logging.sh`](lib/logging.sh) | Levelled logging (DEBUG/INFO/WARN/ERROR) with console or JSON output |
+| [`podman.sh`](lib/podman.sh) | Container and image query/lifecycle helpers |
+| [`require.sh`](lib/require.sh) | Command availability checks and user prompts |
 
-## Configuration
+## Logging configuration
+
+The `logging.sh` module supports these environment variables:
 
 | Variable | Default | Description |
 | --- | --- | --- |
 | `LOG_LEVEL` | `INFO` | Minimum log level: DEBUG, INFO, WARN, ERROR |
 | `LOG_HANDLER` | `console` | Output handler: console, json |
 | `NO_COLOR` | unset | Set to disable colour |
+
+> [!NOTE]
+> `LOG_HANDLER=json` requires [`jq`](https://jqlang.github.io/jq/).
 
 ## Running tests
 
@@ -57,7 +54,7 @@ bats tests/
 ## Linting
 
 ```bash
-shellcheck lib/*.sh
+shellcheck lib/
 ```
 
 ## Licence
