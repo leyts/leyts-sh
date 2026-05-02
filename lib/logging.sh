@@ -108,12 +108,12 @@ _log_validate_log_level() {
 _log() {
     local level="$1"
     shift
-    local message="$*"
 
     local min_level=${_LOG_LEVELS[$LOG_LEVEL]:-${_LOG_LEVELS[INFO]}}
     local msg_level=${_LOG_LEVELS[$level]}
     (( msg_level >= min_level )) || return 0
 
+    local message="$*"
     case "$_LOG_HANDLER" in
         console) _log_handler_console "$level" "$message" ;;
         json)    _log_handler_json    "$level" "$message" ;;
