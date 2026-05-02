@@ -11,7 +11,7 @@ test_helper_setup() {
 
 # Clean up the temporary directory.
 test_helper_teardown() {
-    [[ -d "${TEST_TMPDIR:-}" ]] && rm -rf "$TEST_TMPDIR"
+    [[ -d "${TEST_TMPDIR:-}" ]] && rm -rf -- "$TEST_TMPDIR"
 }
 
 # Create a minimal git repo in a temp directory.
@@ -21,10 +21,10 @@ create_test_repo() {
     local dir="${1:-$TEST_TMPDIR/repo}"
     mkdir -p -- "$dir"
     git -C "$dir" init --quiet
-    git -C "$dir" config user.email "test@test.com"
-    git -C "$dir" config user.name "Test"
-    echo "test" > "$dir/file.txt"
+    git -C "$dir" config user.email 'test@test.com'
+    git -C "$dir" config user.name 'Test'
+    printf 'test\n' > "$dir/file.txt"
     git -C "$dir" add .
-    git -C "$dir" commit --quiet -m "initial commit"
-    echo "$dir"
+    git -C "$dir" commit --quiet -m 'initial commit'
+    printf '%s\n' "$dir"
 }
