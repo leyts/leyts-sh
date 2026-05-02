@@ -26,6 +26,6 @@ confirm() {
     local prompt="${1:-Proceed?}"
     local reply
     read -p "$prompt [y/N] " -n 1 -r reply
-    echo >&2
+    printf '\n'
     [[ "$reply" =~ ^[Yy]$ ]]
 }

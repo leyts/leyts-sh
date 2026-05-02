@@ -27,7 +27,7 @@ git_get_revision() {
         printf "error: failed to get revision for '%s': %s\n" "$repo_path" "$rev" >&2
         return 1
     }
-    echo "$rev"
+    printf '%s\n' "$rev"
 }
 
 # Get the short HEAD revision of a Git repository.

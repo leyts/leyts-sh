@@ -39,7 +39,7 @@ podman_get_container_id() {
         printf "error: container '%s' not found\n" "$name" >&2
         return 1
     }
-    echo "$cid"
+    printf '%s\n' "$cid"
 }
 
 # Get the image used by a container.
@@ -56,7 +56,7 @@ podman_get_container_image() {
         printf "error: no image found for container '%s'\n" "$name" >&2
         return 1
     }
-    echo "$image"
+    printf '%s\n' "$image"
 }
 
 # Get an OCI annotation from an image.
@@ -74,5 +74,5 @@ podman_get_image_annotation() {
         printf "error: annotation '%s' not found on image '%s'\n" "$key" "$image" >&2
         return 1
     }
-    echo "$value"
+    printf '%s\n' "$value"
 }
