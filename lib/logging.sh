@@ -85,9 +85,11 @@ _log_handler_console() {
 }
 
 _log_handler_json() {
+    local lvl="$1"
+    local msg="$2"
     jq -nc \
-        --arg lvl "$1" \
-        --arg msg "$2" \
+        --arg lvl "$lvl" \
+        --arg msg "$msg" \
         '{
             "timestamp": (now | strftime("%Y-%m-%dT%H:%M:%SZ")),
             "level": $lvl,
