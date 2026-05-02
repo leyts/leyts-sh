@@ -56,7 +56,7 @@ _log_init_handler || return 1
 
 declare -gA _LOG_CLR=()
 
-_log_init_colour() {
+_log_init_color() {
     _LOG_CLR=([DEBUG]='' [INFO]='' [WARN]='' [ERROR]='')
 
     # Respect NO_COLOR
@@ -72,7 +72,7 @@ _log_init_colour() {
     _LOG_CLR[ERROR]=$'\033[31m'  # red
 }
 
-_log_init_colour
+_log_init_color
 
 # --- Handlers ---
 
