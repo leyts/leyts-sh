@@ -16,7 +16,7 @@ readonly _LIB_PODMAN_LOADED=1
 # Returns: 0 if exists, 1 otherwise.
 podman_container_exists() {
     local name="${1:?container name required}"
-    podman container inspect "$name" &>/dev/null
+    podman container inspect "$name" >/dev/null 2>&1
 }
 
 # Check whether a container is currently running.

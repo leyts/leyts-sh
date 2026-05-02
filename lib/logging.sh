@@ -36,7 +36,7 @@ _log_init_handler() {
     case "$LOG_HANDLER" in
         console) _LOG_HANDLER='console' ;;
         json)
-            command -v jq &>/dev/null || {
+            command -v jq >/dev/null 2>&1 || {
                 printf "error: LOG_HANDLER=json requires jq\n" >&2
                 return 1
             }

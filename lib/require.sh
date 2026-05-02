@@ -13,7 +13,7 @@ readonly _LIB_REQUIRE_LOADED=1
 # Returns: 0 if found, 1 otherwise (with message to stderr).
 require_command() {
     local cmd="${1:?command name required}"
-    command -v "$cmd" &>/dev/null || {
+    command -v "$cmd" >/dev/null 2>&1 || {
         printf "error: required command '%s' not found\n" "$cmd" >&2
         return 1
     }
