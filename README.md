@@ -1,5 +1,7 @@
 # leyts-sh
 
+![GitHub License](https://img.shields.io/github/license/leyts/homelab)
+
 A small Bash library.
 
 > [!WARNING]
