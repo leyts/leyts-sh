@@ -7,7 +7,7 @@
 # Sources all lib modules. For selective loading, source individual files instead.
 #
 
-_COMMON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+_COMMON_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$_COMMON_DIR/assert.sh"
 source "$_COMMON_DIR/git.sh"

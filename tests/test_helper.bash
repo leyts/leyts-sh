@@ -2,7 +2,7 @@
 # test_helper.bash — Shared setup for bats tests.
 #
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # Create a temporary directory for each test, cleaned up automatically.
 test_helper_setup() {
