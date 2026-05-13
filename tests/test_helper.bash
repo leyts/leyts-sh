@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# test_helper.bash — Shared setup for bats tests.
 #
+# Shared setup for bats tests.
 
 REPO_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 

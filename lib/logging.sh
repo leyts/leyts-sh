@@ -1,19 +1,6 @@
 #!/usr/bin/env bash
-# logging.sh — Structured logging with level filtering and colour support.
 #
-# Usage:
-#   source logging.sh
-#
-#   log_debug "Resolved image: $image"
-#   log_info 'Starting deployment...'
-#   log_warn 'Config file missing, using defaults'
-#   log_error 'Connection refused'
-#
-# Configuration (via environment variables):
-#   LOG_LEVEL   — Minimum level to display: DEBUG, INFO, WARN, ERROR (default: INFO)
-#   LOG_HANDLER — Output handler: console, json (default: console)
-#   NO_COLOR    — Set to any value to disable colour
-#
+# Structured logging with level filtering and colour support.
 
 [[ -n "${_LIB_LOGGING_LOADED:-}" ]] && return 0
 readonly _LIB_LOGGING_LOADED=1

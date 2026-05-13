@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
-# podman.sh — Podman container and image helper functions.
 #
-# Usage:
-#   source podman.sh
-#
-# On failure, functions return a non-zero exit code and write to stderr.
-# On success, output is written to stdout.
-#
+# Podman container and image helper functions.
 
 [[ -n "${_LIB_PODMAN_LOADED:-}" ]] && return 0
 readonly _LIB_PODMAN_LOADED=1

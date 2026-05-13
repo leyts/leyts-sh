@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
-# require.sh — General utility and validation functions.
 #
-# Usage:
-#   source require.sh
-#
+# General utility and validation functions.
 
 [[ -n "${_LIB_REQUIRE_LOADED:-}" ]] && return 0
 readonly _LIB_REQUIRE_LOADED=1

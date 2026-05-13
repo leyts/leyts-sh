@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
-# git.sh — Git helper functions.
 #
-# Usage:
-#   source git.sh
-#
-# On failure, functions return a non-zero exit code and write to stderr.
-# On success, output is written to stdout.
-#
+# Git helper functions.
 
 [[ -n "${_LIB_GIT_LOADED:-}" ]] && return 0
 readonly _LIB_GIT_LOADED=1

@@ -1,14 +1,6 @@
 #!/usr/bin/env bash
-# assert.sh — Guard functions for file system preconditions.
 #
-# Usage:
-#   source assert.sh
-#
-#   assert_file_exists /path/to/file
-#   assert_dir_exists /path/to/dir
-#
-# Each function prints an error to stderr and returns 1 on failure.
-#
+# Guard functions for file system preconditions.
 
 [[ -n "${_LIB_ASSERT_LOADED:-}" ]] && return 0
 readonly _LIB_ASSERT_LOADED=1
