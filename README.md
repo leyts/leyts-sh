@@ -9,13 +9,7 @@ A small Bash library.
 
 ## Usage
 
-Load all modules with `common.sh`:
-
-```bash
-source lib/common.sh
-```
-
-Or load only the modules you need:
+Source the modules you need:
 
 ```bash
 source lib/logging.sh
@@ -26,7 +20,6 @@ source lib/logging.sh
 | File | Description |
 | --- | --- |
 | [`assert.sh`](lib/assert.sh) | Filesystem guard functions (file/directory existence and non-existence) |
-| [`common.sh`](lib/common.sh) | Convenience loader for all modules |
 | [`git.sh`](lib/git.sh) | Repository revision and status queries |
 | [`logging.sh`](lib/logging.sh) | Levelled logging (DEBUG/INFO/WARN/ERROR) with console or JSON output |
 | [`podman.sh`](lib/podman.sh) | Container and image query/lifecycle helpers |
